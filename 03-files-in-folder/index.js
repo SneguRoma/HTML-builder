@@ -5,6 +5,7 @@ const dirRead = path.join(__dirname, 'secret-folder');
 let dirEntries = [];
 
 fs.readdir(dirRead, {withFileTypes: true}, function(err, stats) {
+    if (err) throw err;
     //console.log(stats);
     for(let file of stats){
         if(file.isFile()){
@@ -12,6 +13,7 @@ fs.readdir(dirRead, {withFileTypes: true}, function(err, stats) {
         let stat;
         let pathFile = path.join(__dirname, 'secret-folder', file.name); 
         fs.stat(pathFile, function(err, stats) {
+            if (err) throw err;
              stat = stats.size;             
              console.log(file.name.split('.').join(' - ') + ' - ' + stats.size + 'b'); 
             } );         
