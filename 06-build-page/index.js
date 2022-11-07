@@ -14,11 +14,12 @@ const headerStream = fs.createReadStream(headerRead, 'utf-8');
 const footerStream = fs.createReadStream(footerRead, 'utf-8');
 
 const indexWright = path.join(dirWrite, 'index.html');
-const indexStream = fs.createWriteStream(indexWright, 'utf-8');
+
 
 
 let dirEntries = [];
 let data = '';
+let indexResult = '';
 let article = '';
 let header = '';
 let footer = '';
@@ -27,8 +28,38 @@ fsPromises.mkdir(dirWrite, {recursive: true}).then(function() {
   templateStream.on('data', chunk => data += chunk);  
   templateStream.on('error', error => console.log('Error', error.message));
   templateStream.on('end', function(){
+    fs.readdir(components, {withFileTypes: true}, function(err, stats) {    
+      if (err) throw err;
+      for(let file of stats){
+          if(file.isFile()){
+              dirEntries.push(file);        
+              let readFile = path.join(components, file.name);               
+              let stream = fs.createReadStream(readFile, 'utf-8');
+              let component = '';
+              let shablon ='{{' + file.name.split('.')[0] + '}}';
+              
+              stream.on('data', chunk => component += chunk);              
+              stream.on('end', function(){
+                data = data.split(shablon).join(component);                
+                let indexStream = fs.createWriteStream(indexWright, 'utf-8');
+                indexStream.on('error', error => console.log('Error', error.message)); 
+                indexStream.write(data);
+                
+              }); 
+              stream.on('error', error => console.log('Error', error.message));                                      
+          }        
+      }
+      
+
+  } );
+
+
+
+
+
+
     
-      articleStream.on('data', chunk => article += chunk);
+ /*      articleStream.on('data', chunk => article += chunk);
       articleStream.on('error', error => console.log('Error', error.message));
       articleStream.on('end', 
       function(){
@@ -44,7 +75,7 @@ fsPromises.mkdir(dirWrite, {recursive: true}).then(function() {
           });
         });
         
-      });
+      }); */
      
   });
   
