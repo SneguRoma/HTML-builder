@@ -136,14 +136,14 @@ fsPromises.mkdir(assetsWrite, {recursive: true}).then(function() {
                                   
                             let readFile = path.join(assetsInst, file.name); 
                             let writeFile = path.join(assetsInstWrite, file.name);
-                            let stream = fs.createReadStream(readFile, 'utf-8');
-                            let data = '';
-                            stream.on('data', chunk => data += chunk);
+                            let streamAsset = fs.createReadStream(readFile , 'binary' );
+                            let dataAsset = '';
+                            streamAsset.on('data', chunk => dataAsset += chunk);
                              
-                            let writeStream = fs.createWriteStream(writeFile, 'utf-8');
-                           stream.on('end', () => writeStream.write(data));
-                            stream.on('error', error => console.log('Error', error.message)); 
-                            writeStream.on('error', error => console.log('Error', error.message));                         
+                            let writeStreamAsset = fs.createWriteStream(writeFile , 'binary' );
+                            streamAsset.on('end', () => writeStreamAsset.write(dataAsset));
+                            streamAsset.on('error', error => console.log('Error', error.message)); 
+                            writeStreamAsset.on('error', error => console.log('Error', error.message));                         
                         }
                     }
                 }); 
